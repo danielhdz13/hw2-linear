@@ -19,7 +19,10 @@ def transform_data(features):
     Returns:
         transformed_features (np.ndarray): features after being transformed by the function
     """
-    raise NotImplementedError()
+    x = np.array([feature[0] for feature in features])
+    y = np.array([(feature[1]**2 + feature[0]**2)**.5 for feature in features])
+    transformed_features = np.array([[x[index],y[index]] for index in range(len(x))])
+    return transformed_features
 
 class Perceptron():
     def __init__(self, max_iterations=200):
@@ -48,7 +51,7 @@ class Perceptron():
 
         """
         self.max_iterations = max_iterations
-        raise NotImplementedError()
+        self.weights = None
 
     def fit(self, features, targets):
         """
@@ -64,7 +67,21 @@ class Perceptron():
         Returns:
             None (saves model and training data internally)
         """
-        raise NotImplementedError()
+        new_features = np.asarray([np.append(1,feature) for feature in features])
+        self.weights = np.array([0,0,0])
+        iterate_count = 0
+        while iterate_count < self.max_iterations:
+            converge = True
+            for index in range(len(new_features)):
+                if (self.weights.transpose() @ new_features[index]) * targets[index] <= 1:
+                    converge = False
+                    break
+            if converge:
+                return
+            for index in range(len(new_features)):
+                if (self.weights.transpose() @ new_features[index]) * targets[index] <= 1:
+                    self.weights = self.weights + np.array([elem * targets[index] * .1 for elem in new_features[index]])
+            iterate_count += 1
 
     def predict(self, features):
         """
@@ -76,7 +93,12 @@ class Perceptron():
         Returns:
             predictions (np.ndarray): Output of saved model on features.
         """
-        raise NotImplementedError()
+        predictions = []
+        for index in range(len(features)):
+            label = self.weights.transpose() @ np.append([1],features[index])
+            predictions.append(-1 if label < 0 else 1)
+        solution = np.asarray(predictions)
+        return solution
 
     def visualize(self, features, targets):
         """
@@ -92,4 +114,4 @@ class Perceptron():
         Returns:
             None (plots to the active figure)
         """
-        raise NotImplementedError()
+        pass
