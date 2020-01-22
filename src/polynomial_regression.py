@@ -50,7 +50,7 @@ class PolynomialRegression():
             degree (int): Degree of polynomial used to fit the data.
         """
         self.degree = degree
-        raise NotImplementedError()
+        self.weights = None
     
     def fit(self, features, targets):
         """
@@ -66,7 +66,21 @@ class PolynomialRegression():
         Returns:
             None (saves model and training data internally)
         """
-        raise NotImplementedError()
+        if self.degree == 0: self.weights = np.mean(targets)
+        else:
+            N = features.shape[0]
+            x = np.array(N, self.degree + 1)
+            for row in range(N):
+                for column in range(self.degree + 1):
+                    if column == 0:
+                        x[row][column] = 1
+                    else:
+                        x[row][column] = pow(features[row], column)
+            xt = np.transpose(x)
+            w = np.linalg.solve(np.matmul(xt, x), np.matmul(xt, targets))
+            self.weights = w
+
+
 
     def predict(self, features):
         """
@@ -78,7 +92,11 @@ class PolynomialRegression():
         Returns:
             predictions (np.ndarray): Output of saved model on features.
         """
-        raise NotImplementedError()
+        predictions = []
+        polynomial = np.poly1d(self.weights[::-1])
+        for feature in features:
+            predictions.append(polynomial(feature))
+        return np.asarray(predictions)
 
     def visualize(self, features, targets):
         """
@@ -94,4 +112,4 @@ class PolynomialRegression():
         Returns:
             None (plots to the active figure)
         """
-        raise NotImplementedError()
+        pass
