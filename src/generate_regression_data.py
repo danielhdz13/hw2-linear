@@ -1,4 +1,5 @@
 import numpy as np 
+import random
 
 def generate_regression_data(degree, N, amount_of_noise=1.0):
     """
@@ -40,4 +41,16 @@ def generate_regression_data(degree, N, amount_of_noise=1.0):
             responds to x as a polynomial of degree. 
 
     """
-    raise NotImplementedError()
+    
+    x = np.random.uniform(-1, 1, N)
+    y = np.ndarray(N)
+    #We need to generate (degree + 1) coefficients:
+        # y = ax^(degree) + bx + c
+    for i in range(y.shape[0]):
+        y[i] = random.randint(-10, 10)
+        while degree != 0:
+            y[i] += (random.randint(-10, 10))*pow(x[i], degree)
+            degree = degree - 1
+    y += np.random.normal(loc=0.0, scale= (np.std(y)*amount_of_noise), size=y.shape)
+    return x, y
+    
